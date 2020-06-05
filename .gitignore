@@ -1,0 +1,13 @@
+config
+node_modules
+vendor
+.env
+docker-compose.yml
+npm-debug.log
+yarn-error.log
+images
+/.pnp
+.pnp.js
+/coverage
+/build
+.DS_Store
