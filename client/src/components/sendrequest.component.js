@@ -5,7 +5,7 @@ import { Redirect } from "react-router-dom";
 
 
 const SendRequest = (e) => {
-  const [stem, setStem] = useState("http://192.168.99.104:6200");
+   
   const {authTokens} = useAuth();
   const [recipient, setRecipient] = useState("notset");
   const [recipientID, setRecipientID] = useState();
@@ -24,7 +24,7 @@ const SendRequest = (e) => {
 
   const initializeProps = async() => {
     if(articleID !== "notset") {
-      axios.get(stem + "/api/articles/fetchtitle/" + articleID).then((data) => {
+      axios.get("http://192.168.99.104:6200/api/articles/fetchtitle/" + articleID).then((data) => {
         setArticle(data["data"]);
       });
 
@@ -36,7 +36,7 @@ const SendRequest = (e) => {
     // fetches id and username
     var arr = [];
 
-    axios.get(stem + "/api/users/getidsbyusernamestring/"+e).then((res) => {
+    axios.get("http://192.168.99.104:6200/api/users/getidsbyusernamestring/"+e).then((res) => {
     for(var i = 0; i < res["data"].length; i++) {
     try {throw i}
     catch (ii) {
@@ -59,7 +59,7 @@ const SendRequest = (e) => {
 
 
   const requestAndInitializeArticles = async(e) => {
-    axios.get(stem + "/api/articles/getarraybytitle/"+e).then((res) => {
+    axios.get("http://192.168.99.104:6200/api/articles/getarraybytitle/"+e).then((res) => {
       workMyCollection(res["data"]).then((data) => {
         setArticleButtons(data);
         console.log("my data" + data);
@@ -72,7 +72,7 @@ const SendRequest = (e) => {
 
 
   const asyncCall= async(e,f,g) => {
-    const promise =   axios.get(stem + "/api/users/fetchusername/"+e);
+    const promise =   axios.get("http://192.168.99.104:6200/api/users/fetchusername/"+e);
     return promise.then((res) => {
       return(<button type="button" className="btn btn-secondary list-group-item list-group-item-action" onClick={(e) => {
       setArticle(f);
@@ -104,7 +104,7 @@ const SendRequest = (e) => {
     }
 
 
-    axios.post(stem + "/api/requests/add", req).then((res) => console.log(res));
+    axios.post("http://192.168.99.104:6200/api/requests/add", req).then((res) => console.log(res));
     setDepart("requests");
   }
 

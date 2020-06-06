@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 let User = require('../models/user.model');
-const fs = require('fs');
 const ObjectId = mongoose.Types.ObjectId;
 
 router.route('/').get((req, res) => {
@@ -48,24 +47,13 @@ router.route('/add').post((req, res) => {
   const requests = req.body.requests;
   const picture = req.body.picture;
 
-  const newUser = new User({
-    username,
-    description,
-    toEat,
-    specialties,
-    tags,
-    articles,
-    reviews,
-    requests,
-    picture,
-  });
+  const newUser = new User({username,description,
+    toEat,specialties,tags,articles,reviews,
+    requests,picture, });
   console.log("new user " + newUser);
-  fs.mkdirSync("../public/" + req.body.username, { recursive: true });
-
   newUser.save()
     .then(()=>res.json('User added!'))
     .catch(err=>res.status(400).json('Error: ' + err));
-
 });
 
 router.route('/updatespecialties/:author/:tag').post((req, res) => {

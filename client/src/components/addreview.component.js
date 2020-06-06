@@ -8,7 +8,6 @@ const CreateReview = (e) => {
   // check if review is existing
   // have a reference to what is being reviewed
   const { setAuthTokens, authTokens } = useAuth();
-   const [stem, setStem] = useState("http://192.168.99.104:6200");
   const [depart, setDepart] = useState("stationary");
   const [fetchedReview, finishedFetchingReview] = useAsyncHook("http://192.168.99.104:6200/api/reviews/findbyarticleid/" + ((typeof e["history"]["location"]["state"] === 'undefined') ? "erroneous" : e["history"]["location"]["state"]["articleID"]  )  );
   const [articleID, setArticleID] = useState(((typeof e["history"]["location"]["state"] === 'undefined') ? "notset" : e["history"]["location"]["state"]["articleID"]  ));
@@ -56,15 +55,12 @@ const CreateReview = (e) => {
 
   const initizializeExisting = async() => {
     if(articleID !== "notset") {
-      var fetchedArticle = await axios.get(stem + "/api/articles/get/"+articleID);
-      var newAuthorName = await axios.get(stem + "/api/users/fetchusername/"+ fetchedArticle["data"]["author"]);
+      var fetchedArticle = await axios.get("http://192.168.99.104:6200/api/articles/get/"+articleID);
+      var newAuthorName = await axios.get("http://192.168.99.104:6200/api/users/fetchusername/"+ fetchedArticle["data"]["author"]);
       setAuthorID(fetchedArticle["data"]["author"]);
       setArticleName(fetchedArticle["data"]["title"]);
       setAuthor(newAuthorName["data"]);
       setExtraOptions(checkForSpecialties(articleID));
-      /// must set author id
-      /// must set articleName
-      /// must set username
     }
   }
 
@@ -95,7 +91,7 @@ const CreateReview = (e) => {
   }
 
   const returnAuthorResults = (e) => {
-    setAuthorQuery(stem + "/api/users/getidsbyusernamestring/"+e);
+    setAuthorQuery("http://192.168.99.104:6200/api/users/getidsbyusernamestring/"+e);
 
   }
 
@@ -110,7 +106,7 @@ const CreateReview = (e) => {
         tempArr.push( <button type="button" id={i} className="btn btn-secondary list-group-item list-group-item-action" onClick={(e) => {
           setAuthor(authorChoices[e.target.id]["username"]);
           setAuthorID(authorChoices[e.target.id]["id"]);
-          setArticleQuery(stem + "/api/articles/gettitlebyauthor/"+ authorChoices[e.target.id]["id"]);
+          setArticleQuery("http://192.168.99.104:6200/api/articles/gettitlebyauthor/"+ authorChoices[e.target.id]["id"]);
         }}>{authorChoices[i]["username"]}</button>);
       }
     }
@@ -118,10 +114,10 @@ const CreateReview = (e) => {
   }
 
   const checkForSpecialties = async(article) => {
-    const userSpecialties = axios.get(stem + stem + "/api/users/fetchspecialties/" + authTokens[0].usernameID); // recieves the specialites of the user
-    console.log(stem + "/api/users/fetchspecialties/" + authTokens[0].usernameID);
-    const articleTags = axios.get(stem + "/api/articles/gettags/"+ article);
-    console.log(stem + "/api/articles/gettags/"+ article);
+    const userSpecialties = axios.get("http://192.168.99.104:6200/api/users/fetchspecialties/" + authTokens[0].usernameID); // recieves the specialites of the user
+    console.log("http://192.168.99.104:6200/api/users/fetchspecialties/" + authTokens[0].usernameID);
+    const articleTags = axios.get("http://192.168.99.104:6200/api/articles/gettags/"+ article);
+    console.log("http://192.168.99.104:6200/api/articles/gettags/"+ article);
      // receives the tags on the article
     return Promise.all([userSpecialties, articleTags]).then(async([e, f]) => {
       for (var elem in f["data"]) {
@@ -238,13 +234,13 @@ const CreateReview = (e) => {
   const searchForExisting = (e) => {
     // pull reviews from user profile
     // check each one and see if the article matches
-    axios.get(stem + '/api/reviews/getbyreviewer/'+authTokens[0].usernameID+'/'+e).then((res) => {
+    axios.get('http://192.168.99.104:6200/api/reviews/getbyreviewer/'+authTokens[0].usernameID+'/'+e).then((res) => {
 
       if (res["data"].length > 0)  {
         console.log("you have already reviewed this article");
         setExisting(true);
         setReviewId(res["data"][0]);
-        axios.get(stem + "/api/reviews/get/"+res["data"][0]).then((res2) => {
+        axios.get("http://192.168.99.104:6200/api/reviews/get/"+res["data"][0]).then((res2) => {
 
           setOldRating(res2["data"]["rating"]);
           setOldApproved(res2["data"]["approved"]);
@@ -261,8 +257,8 @@ const CreateReview = (e) => {
     var collectiveAverage = 0;
     var collectiveCount = 0;
     var collectivePeercount = 0;
-    var articleinfo = axios.get(stem + "/api/articles/getarticleinfobytaganduser/"+ d +"/"+e);
-    console.log(stem + "/api/articles/getarticleinfobytaganduser/"+ d +"/"+e);
+    var articleinfo = axios.get("http://192.168.99.104:6200/api/articles/getarticleinfobytaganduser/"+ d +"/"+e);
+    console.log("http://192.168.99.104:6200/api/articles/getarticleinfobytaganduser/"+ d +"/"+e);
     return articleinfo.then(async(data) => {
        for(var elem in data["data"]) {
          console.log("Av "+  data["data"][elem]["averageReview"]);
@@ -314,23 +310,23 @@ const CreateReview = (e) => {
         "approved": approved
       }
       if(!existing) {
-        axios.post(stem + "/api/reviews/add", review).then(res => (console.log(res))).catch(err => console.log("Error: " + err));
-        axios.post(stem + "/api/articles/rate/"+articleID, review).then(res => (console.log(res))).catch(err => console.log("Error: " + err));
+        axios.post("http://192.168.99.104:6200/api/reviews/add", review).then(res => (console.log(res))).catch(err => console.log("Error: " + err));
+        axios.post("http://192.168.99.104:6200/api/articles/rate/"+articleID, review).then(res => (console.log(res))).catch(err => console.log("Error: " + err));
         // above are working
 
 
-        axios.get(stem + '/api/reviews/getbyreviewer/'+authTokens[0].usernameID+'/'+articleID)
+        axios.get('http://192.168.99.104:6200/api/reviews/getbyreviewer/'+authTokens[0].usernameID+'/'+articleID)
         .then((res) => {
           const update = {
             "reviewID": res["data"][0]
           }
-          axios.post(stem + "/api/users/updateuserreviews/"+authTokens[0].usernameID, update);
+          axios.post("http://192.168.99.104:6200/api/users/updateuserreviews/"+authTokens[0].usernameID, update);
         });
       }
       else {
 
         // update review
-        axios.post(stem + "/api/reviews/update/"+reviewId, review).then(res => (console.log(res))).catch(err => console.log("Errors: " + err));
+        axios.post("http://192.168.99.104:6200/api/reviews/update/"+reviewId, review).then(res => (console.log(res))).catch(err => console.log("Errors: " + err));
         // update article (pass old review)
         const updateRating = {
           "rating": rating,
@@ -340,22 +336,22 @@ const CreateReview = (e) => {
         }
 
         console.log(updateRating);
-        console.log(stem + "/api/articles/updaterate/"+articleID);
+        console.log("http://192.168.99.104:6200/api/articles/updaterate/"+articleID);
         console.log(updateRating);
-        axios.post(stem + "/api/articles/updaterate/"+articleID, updateRating).then(res => {
+        axios.post("http://192.168.99.104:6200/api/articles/updaterate/"+articleID, updateRating).then(res => {
 
         }).catch(err => console.log(err));
 
       }
 
     // do this for every tag
-    axios.get(stem + "/api/articles/gettags/"+ articleID).then((data) => {
+    axios.get("http://192.168.99.104:6200/api/articles/gettags/"+ articleID).then((data) => {
       for(var elem in data["data"]) {
         returnAverageandCount(authorID, data["data"][elem]).then((data2) => {
           console.log(data2);
           if(data2["average"] > 2) {
             console.log("it was greater than 2");
-            axios.post(stem + "/api/users/updatespecialties/"+authorID+"/"+data["data"][elem]);
+            axios.post("http://192.168.99.104:6200/api/users/updatespecialties/"+authorID+"/"+data["data"][elem]);
           }
         });
       }

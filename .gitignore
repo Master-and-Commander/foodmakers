@@ -11,3 +11,6 @@ images
 /coverage
 /build
 .DS_Store
+.git
+mongo-volume
+init-mongo

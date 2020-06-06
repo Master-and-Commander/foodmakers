@@ -2,14 +2,14 @@ const router = require('express').Router();
 
 let LoginData = require('../models/logininfo.model');
 
-router.route('/').get((req, res) => {
+router.route("/").get((req, res) => {
   LoginData.find()
   .then(logindata => res.json(logindata))
   .catch(err => res.status(400).json('Error4: ' + err));
 });
 
 
-router.route('/add').post((req, res) => {
+router.route("/add").post((req, res) => {
   const username = req.body.username;
   const email= req.body.email;
   const passwordHash = req.body.passwordHash;
@@ -28,7 +28,8 @@ router.route('/add').post((req, res) => {
 });
 
 
-router.route("/validatelogin/").post((req, res) => {
+router.route("/validatelogin").post((req, res) => {
+  console.log(" Made it this far");
   LoginData.find({
     username: req.body.userName,
     passwordHash: req.body.check}).limit(1).
@@ -43,10 +44,10 @@ router.route("/validatelogin/").post((req, res) => {
 });
 
 
-router.route('/get/:id').get((req, res) => {
+router.route("get/:id").get((req, res) => {
   LoginData.findById(req.params.id)
   .then(logindata => res.json(logindata))
-  .catch(err => res.status(400).json('Error2: '  + err));
+  .catch(err => res.status(400).json("get Id error: "  + err));
 });
 
 router.route('/get/:id').delete((req,res) => {
@@ -55,14 +56,14 @@ router.route('/get/:id').delete((req,res) => {
   .catch(err => res.status(400).json('Error1: ' + err));
 });
 
-router.route('/hashbyusername/:username').get((req,res) => {
+router.route("/hashbyusername/:username").get((req,res) => {
   LoginData.find({username: req.params.username}, {passwordHash:1}).limit(1)
   .then(logindata => res.json(logindata))
-  .catch(err => res.status(400).json('You messed up here: ' + err));
+  .catch(err => res.status(400).json("hashbyusername error: " + err));
 
 });
 
-router.route('/findbyemail/:email').get((req,res) => {
+router.route("/findbyemail/:email").get((req,res) => {
   var re = new RegExp("^" + req.params.email + "$","i");
   LoginData.find({"email" : {$regex: re}}).then((data) => {
     if (String(data) === "") {
@@ -74,7 +75,7 @@ router.route('/findbyemail/:email').get((req,res) => {
   });
 });
 
-router.route('/update/:id').post((req, res) => {
+router.route("/update/:id").post((req, res) => {
   LoginData.findByIdAndUpdate(
     req.params.id, {$set: {usernameID : req.body.usernameID, username : req.body.username, email : req.body.email}})
   .then(() => res.status(200).json("bravo"))

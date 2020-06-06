@@ -6,7 +6,7 @@ import {useAsyncHook} from './useAsyncHook';
 
 const Tag = (e) => {
   const [name, setName] = useState();
-  const [stem, setStem] = useState("http://192.168.99.104:6200");
+   
   const [description, setDescription] = useState();
   const [query, setQuery] = useState();
   const [result, finished] = useAsyncHook("http://192.168.99.104:6200/api/tags/get/" + ((typeof e["history"]["location"]["state"] === 'undefined') ? "erroneous" : e["history"]["location"]["state"]["tagID"]  )  );
@@ -23,7 +23,7 @@ const Tag = (e) => {
   }
 
   React.useEffect(() => {
-   //setQuery(stem + "/api/tags/get/" + e["history"]["location"]["state"]["tagID"]);
+   //setQuery("http://192.168.99.104:6200/api/tags/get/" + e["history"]["location"]["state"]["tagID"]);
   }, []);
 
   const renderDetails = () => {
@@ -43,7 +43,7 @@ const Tag = (e) => {
     <div>
      <h1>{origin}</h1>
      <div>
-     {finished == undefined ? (<span>{renderDetails()}</span>)
+     {finished  === undefined ? (<span>{renderDetails()}</span>)
      : (<p>nothing here</p>)}
      </div>
     </div>

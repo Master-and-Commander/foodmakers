@@ -8,17 +8,17 @@ const ViewReview = (e) => {
    const [reviewID, setReviewID] = useState((typeof e["history"]["location"]["state"] === 'undefined') ? "notset" : e["history"]["location"]["state"]["reviewID"]);
    const [reviewInfo, setReviewInfo] = useState([]);
    const [related, setRelated] = useState([]);
-   const [stem, setStem] = useState("http://192.168.99.104:6200");
+    
 
 
    const showReview = async() => {
      if(reviewID !== "notset") {
-       console.log(stem + "/api/reviews/get/"+ reviewID);
-       var review = await axios.get(stem + "/api/reviews/get/"+ reviewID);
-       var author = await axios.get(stem + "/api/articles/fetchauthor/" + review["data"]["articleId"]);
-       var title = await axios.get(stem + "/api/articles/fetchtitle/" + review["data"]["articleId"]);;
-       var name = await axios.get(stem + "/api/users/fetchusername/" + author["data"]);
-       var reviewer = await axios.get(stem + "/api/users/fetchusername/" + review["data"]["reviewer"]);
+       console.log("http://192.168.99.104:6200/api/reviews/get/"+ reviewID);
+       var review = await axios.get("http://192.168.99.104:6200/api/reviews/get/"+ reviewID);
+       var author = await axios.get("http://192.168.99.104:6200/api/articles/fetchauthor/" + review["data"]["articleId"]);
+       var title = await axios.get("http://192.168.99.104:6200/api/articles/fetchtitle/" + review["data"]["articleId"]);;
+       var name = await axios.get("http://192.168.99.104:6200/api/users/fetchusername/" + author["data"]);
+       var reviewer = await axios.get("http://192.168.99.104:6200/api/users/fetchusername/" + review["data"]["reviewer"]);
        setReviewInfo(
          <div>
          <h1>{review["data"]["title"]}</h1>

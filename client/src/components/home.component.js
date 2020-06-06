@@ -17,12 +17,12 @@ import {useAsyncHookforList} from './useAsyncHookforList';
    const [userArticles, setUserArticles] = useState([]);
    const [userTags, setUserTags] = useState([]);
    const [description, setDescription] = useState("");
-   const [stem, setStem] = useState("http://192.168.99.104:6200");
+    
 
 
    const initializeUserProfile = () => {
      // pull user basics
-     const profilePromise = axios.get(stem + "/api/users/get/" + authTokens[0].usernameID);
+     const profilePromise = axios.get("http://192.168.99.104:6200/api/users/get/" + authTokens[0].usernameID);
      return profilePromise.then(async(data) => {
        setUserDetails(data["data"]);
        setDescription(<p className="card-text">
@@ -44,10 +44,10 @@ import {useAsyncHookforList} from './useAsyncHookforList';
 
 
      Promise.all(e.map(async(item)=> {
-       var author = await axios.get(stem + "/api/articles/fetchauthor/" + item);
-       var title = await axios.get(stem + "/api/articles/fetchtitle/" + item);
-       var articleInfo = await axios.get(stem + "/api/articles/get/" + item);
-       var name = await axios.get(stem + "/api/users/fetchusername/" + author["data"]);
+       var author = await axios.get("http://192.168.99.104:6200/api/articles/fetchauthor/" + item);
+       var title = await axios.get("http://192.168.99.104:6200/api/articles/fetchtitle/" + item);
+       var articleInfo = await axios.get("http://192.168.99.104:6200/api/articles/get/" + item);
+       var name = await axios.get("http://192.168.99.104:6200/api/users/fetchusername/" + author["data"]);
        var path = "/"+name["data"]+"/"+item;
        console.log("path " + path);
 
@@ -75,7 +75,7 @@ import {useAsyncHookforList} from './useAsyncHookforList';
                                  <button className="dropdown-item" onClick={() => {setDepart("request"); setExtra(item)}} >Request</button>
                                  <button className="dropdown-item" onClick={() => {
                                    console.log("removing http://localhost:5000/users/removeitemfromeatlist/"+authTokens[0].usernameID+"/"+item);
-                                   axios.post(stem + "/api/users/removeitemfromeatlist/"+authTokens[0].usernameID+"/"+item);
+                                   axios.post("http://192.168.99.104:6200/api/users/removeitemfromeatlist/"+authTokens[0].usernameID+"/"+item);
                                    initializeUserProfile();
                                  }} >Remove</button>
                                </div>
@@ -106,16 +106,16 @@ import {useAsyncHookforList} from './useAsyncHookforList';
      var arr = [];
 
      Promise.all(e.map(async(item)=> {
-       var review = await axios.get(stem+"/api/reviews/get/"+item);
+       var review = await axios.get("http://192.168.99.104:6200/api/reviews/get/"+item);
 
        console.log(item);
-       console.log(stem + "/api/articles/fetchauthor/" + review["data"]["articleId"]);
-       var author = await axios.get(stem + "/api/articles/fetchauthor/" + review["data"]["articleId"]);
+       console.log("http://192.168.99.104:6200/api/articles/fetchauthor/" + review["data"]["articleId"]);
+       var author = await axios.get("http://192.168.99.104:6200/api/articles/fetchauthor/" + review["data"]["articleId"]);
 
-       var title = await axios.get(stem + "/api/articles/fetchtitle/" + review["data"]["articleId"]);
-       console.log(stem + "/api/articles/fetchtitle/" + review["data"]["articleId"]);
-       console.log(stem + "/api/users/fetchusername/" + author["data"]["username"]);
-       var name = await axios.get(stem + "/api/users/fetchusername/" + author["data"]);
+       var title = await axios.get("http://192.168.99.104:6200/api/articles/fetchtitle/" + review["data"]["articleId"]);
+       console.log("http://192.168.99.104:6200/api/articles/fetchtitle/" + review["data"]["articleId"]);
+       console.log("http://192.168.99.104:6200/api/users/fetchusername/" + author["data"]["username"]);
+       var name = await axios.get("http://192.168.99.104:6200/api/users/fetchusername/" + author["data"]);
        console.log("approved");
        console.log(review["data"]["approved"]);
 
@@ -168,10 +168,10 @@ import {useAsyncHookforList} from './useAsyncHookforList';
      Promise.all(e.map(async(item)=> {
 
 
-       var author = await axios.get(stem + "/api/articles/fetchauthor/" + item);
-       var title = await axios.get(stem + "/api/articles/fetchtitle/" + item);
-       var articleInfo = await axios.get(stem + "/api/articles/get/" + item);
-       var name = await axios.get(stem + "/api/users/fetchusername/" + author["data"]);
+       var author = await axios.get("http://192.168.99.104:6200/api/articles/fetchauthor/" + item);
+       var title = await axios.get("http://192.168.99.104:6200/api/articles/fetchtitle/" + item);
+       var articleInfo = await axios.get("http://192.168.99.104:6200/api/articles/get/" + item);
+       var name = await axios.get("http://192.168.99.104:6200/api/users/fetchusername/" + author["data"]);
        var path = "/"+name["data"]+"/"+item;
        console.log("path " + path);
 
@@ -223,7 +223,7 @@ import {useAsyncHookforList} from './useAsyncHookforList';
      console.log("details");
      console.log(details["specialties"]);
      Promise.all(e.map(async(item) => {
-       var tag = await axios.get(stem + "/api/tags/get/" + item);
+       var tag = await axios.get("http://192.168.99.104:6200/api/tags/get/" + item);
        if(details["specialties"].includes(item))
        arr.push(<div className="btn-group" role="group">
        <button type="button" className="btn btn-primary mr-2" onClick={(e) => {

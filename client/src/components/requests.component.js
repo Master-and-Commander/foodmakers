@@ -7,7 +7,7 @@ import axios from 'axios';
 const Requests = () => {
   const {authTokens} = useAuth();
   const [sentRequests, setSentRequests] = useState();
-  const [stem, setStem] = useState("http://192.168.99.104:6200");
+   
 
   const [depart, setDepart] = useState("stationary");
   const [params, setParams] = useState();
@@ -43,13 +43,13 @@ const Requests = () => {
    const returnSentChoices = async(recipientID, parent, article, id) => {
 
 
-     const promise =  axios.get(stem + "/api/users/fetchusername/"+recipientID);
-     const titlePromise = axios.get(stem + "/api/articles/fetchtitle/"+ article);
-     const authorPromise = axios.get(stem + "/api/articles/fetchauthor/"+ article);
+     const promise =  axios.get("http://192.168.99.104:6200/api/users/fetchusername/"+recipientID);
+     const titlePromise = axios.get("http://192.168.99.104:6200/api/articles/fetchtitle/"+ article);
+     const authorPromise = axios.get("http://192.168.99.104:6200/api/articles/fetchauthor/"+ article);
 
      return Promise.all([promise, titlePromise, authorPromise]).then(async([p1, p2, p3]) => {
        console.log("p2 " + p2["data"]);
-       const creatorPromise = axios.get(stem + "/api/users/fetchusername/"+ p3["data"])
+       const creatorPromise = axios.get("http://192.168.99.104:6200/api/users/fetchusername/"+ p3["data"])
        return creatorPromise.then((res) => {
          return(<div>
            <div className="card border-0">
@@ -61,7 +61,7 @@ const Requests = () => {
                                pathname: '/user',
                                state: { userID: recipientID }}}>{p1["data"]}</Link> </h3>
                                <button className="btn btn-secondary ml-auto" onClick={()=> {
-                                 axios.delete(stem + "/api/requests/get/"+id);
+                                 axios.delete("http://192.168.99.104:6200/api/requests/get/"+id);
                                  initializeReceivedRequests();
                                  initializeSentRequests();
                                }}> delete </button>
@@ -78,11 +78,11 @@ const Requests = () => {
 
    }
    const returnReceivedChoices = async(senderID, parent, article, id) => {
-     const promise =   axios.get(stem + "/api/users/fetchusername/"+senderID);
-     const titlePromise = axios.get(stem + "/api/articles/fetchtitle/"+ article);
-     const authorPromise = axios.get(stem + "/api/articles/fetchauthor/"+ article);
+     const promise =   axios.get("http://192.168.99.104:6200/api/users/fetchusername/"+senderID);
+     const titlePromise = axios.get("http://192.168.99.104:6200/api/articles/fetchtitle/"+ article);
+     const authorPromise = axios.get("http://192.168.99.104:6200/api/articles/fetchauthor/"+ article);
      return Promise.all([promise, titlePromise, authorPromise]).then(async([p1, p2, p3]) => {
-       const creatorPromise = axios.get(stem + "/api/users/fetchusername/"+ p3["data"])
+       const creatorPromise = axios.get("http://192.168.99.104:6200/api/users/fetchusername/"+ p3["data"])
        return creatorPromise.then((res) => {
          return(<div>
            <div className="card border-0">
@@ -94,7 +94,7 @@ const Requests = () => {
                                pathname: '/user',
                                state: { userID: senderID }}}>{res["data"]}</Link> </h3>
                  <button className="btn btn-secondary ml-auto" onClick={()=> {
-                   axios.delete(stem + "/api/requests/get/"+id);
+                   axios.delete("http://192.168.99.104:6200/api/requests/get/"+id);
                    initializeReceivedRequests();
                    initializeSentRequests();
                  }}> delete </button>
@@ -111,7 +111,7 @@ const Requests = () => {
      });
    }
    const initializeReceivedRequests = async() => {
-     const promise =  axios.get(stem + "/api/requests/getbyrecipient/"+authTokens[0]["usernameID"]);
+     const promise =  axios.get("http://192.168.99.104:6200/api/requests/getbyrecipient/"+authTokens[0]["usernameID"]);
      promise.then(async(res) => {
        setReceivedRequests(await workMyCollection(res["data"],2));
       });

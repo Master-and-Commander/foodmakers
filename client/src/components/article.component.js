@@ -8,10 +8,10 @@ import axios from 'axios';
 
 const Article = (e) => {
   const {authTokens} = useAuth();
-  const [stem, setStem] = useState("http://192.168.99.104:6200");
+   
   const [result, finished] = useAsyncHook("http://192.168.99.104:6200/api/articles/get/" + ((typeof e["history"]["location"]["state"] === 'undefined') ? "erroneous" : e["history"]["location"]["state"]["articleID"]  )  );
   const [username, userNameRetrieved] = useAsyncHook("http://192.168.99.104:6200/api/users/get/" + ((typeof finished === 'undefined') ? result["data"].author : "erroneous"));
-  const [tags, finTags] = useAsyncHookforList("http://192.168.99.104:6200/api/articles/get/" + ((typeof e["history"]["location"]["state"] === 'undefined') ? "erroneous" : e["history"]["location"]["state"]["articleID"] ), stem + "/api/tags/get/", "tags");
+  const [tags, finTags] = useAsyncHookforList("http://192.168.99.104:6200/api/articles/get/" + ((typeof e["history"]["location"]["state"] === 'undefined') ? "erroneous" : e["history"]["location"]["state"]["articleID"] ), "http://192.168.99.104:6200/api/tags/get/", "tags");
   const [extra, setExtra] = useState();
   const [depart, setDepart] = useState("stationary");
   const [buttons, setButtons] = useState([]);
@@ -85,7 +85,7 @@ const Article = (e) => {
   }
 
   const addToEatList = (articleID) => {
-    axios.post(stem + "/api/users/updateeatlist/"+authTokens[0].usernameID +"/"+ articleID).then((res) => console.log(res));
+    axios.post("http://192.168.99.104:6200/api/users/updateeatlist/"+authTokens[0].usernameID +"/"+ articleID).then((res) => console.log(res));
 
   }
 
@@ -124,7 +124,7 @@ const Article = (e) => {
                {result["data"].description}
                </div>
                <div>
-               <span>by {userNameRetrieved == undefined ? (<span><a onClick={(e) => {
+               <span>by {userNameRetrieved  === undefined ? (<span><a onClick={(e) => {
                  setExtra(result["data"].author);
                  setDepart("author"); }}>{username["data"].username}</a></span>) : (<span> chef </span>)}</span>
                </div>
@@ -162,7 +162,7 @@ const Article = (e) => {
 
   return (
     <div>
-     <div>{finished == undefined ? (<span>{returnSpecificContent()}</span>)
+     <div>{finished  === undefined ? (<span>{returnSpecificContent()}</span>)
      : (<p>nothing here</p>)}
      </div>
     </div>

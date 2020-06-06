@@ -8,14 +8,10 @@ var cors = require('cors');
 var port = 6200;
 
 // Connection to DB
-mongoose.connect('mongodb://mongodb')
-    .then(() => {
-      console.log('Backend Started');
-    })
-    .catch(err => {
-        console.error('Backend error:', err.stack);
-        process.exit(1);
-    });
+// mongodb://YourUsername:YourPasswordHere@127.0.0.1:27017/your-database-name
+mongoose.connect('mongodb://root:localdev@mongodb:27017/foodmakers?retryWrites=true&w=majority')
+    .then(() => {console.log('Backend Started');})
+    .catch(err => {console.error('Backend error:', err.stack);process.exit(1);});
 
 
 

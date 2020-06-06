@@ -7,7 +7,7 @@ import Crypto from "crypto-js";
 
 
 const Signup = () => {
-  const [stem, setStem] = useState("http://192.168.99.104:6200");
+   
   const [username, setUsername] = useState("");
   const [usernamePass, setUsernamePass] = useState(false);
 
@@ -54,7 +54,7 @@ const Signup = () => {
     }
     // username must be unique
     else {
-      axios.get(stem + "/api/users/confirmifusernameexists/" + e).then(
+      axios.get("http://192.168.99.104:6200/api/users/confirmifusernameexists/" + e).then(
         res =>  {
           if(res["data"]=== "empty") {
             setUsernameMessage("This username is free to take!");
@@ -80,7 +80,7 @@ const Signup = () => {
     var pat = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
     var check = e.search(pat);
     if (check !== -1) {
-      axios.get(stem + "/api/login/findbyemail/"+e).then((res) => {
+      axios.get("http://192.168.99.104:6200/api/login/findbyemail/"+e).then((res) => {
         if(res["data"] !== "empty") {
           setEmailMessage("You already seem to have an account here");
           setEmailPass(false);
@@ -115,9 +115,9 @@ const Signup = () => {
 
         console.log("User " + newUser);
 
-        axios.post(stem + "/api/users/add", newUser).then(() => {
+        axios.post("http://192.168.99.104:6200/api/users/add", newUser).then(() => {
           // retrieve id of record you just added
-          axios.get(stem + "/api/users/getidbyusername/"+username).then((res) => {
+          axios.get("http://192.168.99.104:6200/api/users/getidbyusername/"+username).then((res) => {
             if(res["data"] === "empty") {
               console.log("Something went wrong");
             }
@@ -134,10 +134,10 @@ const Signup = () => {
               console.log("data: " + res["data"]);
               console.log("password: " + Crypto.SHA256(password2).toString() );
 
-              axios.post(stem + "/api/login/add", newLoginData).then(() => {
+              axios.post("http://192.168.99.104:6200/api/login/add", newLoginData).then(() => {
                 const check = Crypto.SHA256(password2).toString();
                 var userName = username;
-                axios.post(stem + '/api/login/validatelogin/', {userName, check})
+                axios.post('http://192.168.99.104:6200/api/login/validatelogin/', {userName, check})
                 .then(result => {
                   if (result.status === 200) {
 

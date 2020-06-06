@@ -5,7 +5,7 @@ import { Link, Redirect } from "react-router-dom";
 import {useAsyncHook} from './useAsyncHook';
 
 const Search = () => {
-  const [stem, setStem] = useState("http://192.168.99.104:6200");
+   
   const [query, setQuery] = useState();
   const [depart, setDepart] = useState();
   const [extra, setExtra] = useState();
@@ -104,8 +104,8 @@ const Search = () => {
 
   const pullUsers = async(str) => {
     var arr = [];
-    console.log(stem + "/api/users/getidsbyusernamestring/" + str);
-    axios.get(stem + "/api/users/getidsbyusernamestring/" + str).then((data) => {
+    console.log("http://192.168.99.104:6200/api/users/getidsbyusernamestring/" + str);
+    axios.get("http://192.168.99.104:6200/api/users/getidsbyusernamestring/" + str).then((data) => {
       if(data["data"].length > 0) {
         data["data"].map(async(item) => {
           arr.push(<p><button type="button" className="btn btn-secondary list-group-item list-group-item-action" onClick={(e) => {
@@ -132,10 +132,10 @@ const Search = () => {
   }
 
   const returnReviews = async(item) => {
-    var title = await axios.get(stem + "/api/articles/fetchtitle/" + item["articleId"]);
-    var author = await axios.get(stem + "/api/articles/fetchauthor/" + item["articleId"]);
+    var title = await axios.get("http://192.168.99.104:6200/api/articles/fetchtitle/" + item["articleId"]);
+    var author = await axios.get("http://192.168.99.104:6200/api/articles/fetchauthor/" + item["articleId"]);
     return Promise.all([title, author]).then(async([fetTitle, fetAuthor]) => {
-      var authorName = await axios.get(stem + "/api/users/fetchusername/" + author["data"]);
+      var authorName = await axios.get("http://192.168.99.104:6200/api/users/fetchusername/" + author["data"]);
       return (<div>
         <div className="card border-0">
           <div className="card-body">
@@ -201,28 +201,28 @@ const Search = () => {
       <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <button className="dropdown-item" onClick={() => {
           setSearch("Author");
-          setPrimary(stem + "/api/articles/search/author");
+          setPrimary("http://192.168.99.104:6200/api/articles/search/author");
           setMode(1);
         }}>Author</button>
         <button className="dropdown-item" onClick={() => {
           setSearch("Title");
-          setPrimary(stem + "/api/articles/search/title");
+          setPrimary("http://192.168.99.104:6200/api/articles/search/title");
           setMode(1);
         }}>Title</button>
         <button className="dropdown-item" onClick={() => {
           setSearch("Tag");
-          setPrimary(stem + "/api/articles/search/tag");
+          setPrimary("http://192.168.99.104:6200/api/articles/search/tag");
           setMode(1);
         }}>Tag</button>
         <button className="dropdown-item" onClick={() => {
           setSearch("Reviewer");
-          setPrimary(stem + "/api/reviews/search/reviewer");
+          setPrimary("http://192.168.99.104:6200/api/reviews/search/reviewer");
           setResults([]);
           setMode(2);
         }}>Reviewer</button>
         <button className="dropdown-item" onClick={() => {
           setSearch("Reviewee");
-          setPrimary(stem + "/api/reviews/search/reviewee");
+          setPrimary("http://192.168.99.104:6200/api/reviews/search/reviewee");
           setResults([]);
           setMode(2);
       }}>Reviewee</button>

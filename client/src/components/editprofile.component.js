@@ -7,9 +7,9 @@ import {useAsyncHookforList} from './useAsyncHookforList';
 
 const EditProfile = () => {
  const { setAuthTokens, authTokens } = useAuth();
- const [stem, setStem] = useState("http://192.168.99.104:6200");
+  
  const [user, loadingForUser] = useAsyncHook("http://192.168.99.104:6200/api/users/get/"+authTokens[0].usernameID);
- const [list, done] = useAsyncHookforList("http://192.168.99.104:6200/api/users/get/"+authTokens[0].usernameID, stem + "/api/tags/get/", "tags");
+ const [list, done] = useAsyncHookforList("http://192.168.99.104:6200/api/users/get/"+authTokens[0].usernameID, "http://192.168.99.104:6200/api/tags/get/", "tags");
  console.log("authTokens " + authTokens[0].usernameID);
  console.log("done " + done);
 
@@ -188,7 +188,7 @@ const EditProfile = () => {
   }
 
   const returnResults = (e) => {
-    setQuery(stem + "/api/tags/getbystring/"+e);
+    setQuery("http://192.168.99.104:6200/api/tags/getbystring/"+e);
     console.log(e);
   }
 
@@ -201,7 +201,7 @@ const EditProfile = () => {
       picture: "IMAGE-"+username,
       tags: updatedTags
     }
-      axios.post(stem + '/api/users/updateprofile/'+authTokens[0].usernameID, profile).then(res => console.log(res.data)).catch(err => console.log(err.response));
+      axios.post('http://192.168.99.104:6200/api/users/updateprofile/'+authTokens[0].usernameID, profile).then(res => console.log(res.data)).catch(err => console.log(err.response));
   }
 
   const pushButton = (e) => {
@@ -257,7 +257,7 @@ const EditProfile = () => {
     console.log("E: " + e);
 
 
-    axios.post(stem + "/api/picture/upload/"+authTokens[0].username, formData, config).then((res) => {
+    axios.post("http://192.168.99.104:6200/api/picture/upload/"+authTokens[0].username, formData, config).then((res) => {
       console.log(res);
     });
   };
@@ -338,7 +338,7 @@ const EditProfile = () => {
       <div>
       {
         finished === "false" ? (<span> no description found </span>)
-        : result == "heya" ? (<span> no description found </span>)
+        : result  === "heya" ? (<span> no description found </span>)
         : (<p> {treatJSON(result)} </p>)
       }
 

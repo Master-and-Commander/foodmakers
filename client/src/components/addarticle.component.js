@@ -6,8 +6,7 @@ import {useAsyncHookforList} from './useAsyncHookforList';
 
 const CreateArticle = (e) => {
   var id = ((typeof e["history"]["location"]["state"] === 'undefined') ? "erroneous" : e["history"]["location"]["state"]["articleID"]  );
-  const { setAuthTokens, authTokens } = useAuth();
-  const [stem, setStem] = useState("http://192.168.99.104:6200");
+  const {setAuthTokens, authTokens } = useAuth();   
   const [author, setAuthor] = useState(authTokens[0].id + "");
   const [title,  setTitle] = useState();
   const [description, setDescription] = useState();
@@ -49,7 +48,7 @@ const CreateArticle = (e) => {
   }, [finTags]);
 
   const returnResults = (e) => {
-    setQuery(stem + "/api/tags/getbystring/"+e);
+    setQuery("http://192.168.99.104:6200/api/tags/getbystring/"+e);
     console.log(e);
   }
 
@@ -288,13 +287,13 @@ const CreateArticle = (e) => {
 
 
     if (existing === "false") {
-      axios.post(stem + '/api/articles/add', article).then(res =>
-        axios.post(stem + "/api/users/updatearticles/"+authTokens[0].usernameID+"/"+res["data"])
+      axios.post('http://192.168.99.104:6200/api/articles/add', article).then(res =>
+        axios.post("http://192.168.99.104:6200/api/users/updatearticles/"+authTokens[0].usernameID+"/"+res["data"])
       ).catch(err => console.log(err.response));
     }
     else
     {
-        axios.post(stem + '/api/articles/update/'+id, article).then(res => {
+        axios.post('http://192.168.99.104:6200/api/articles/update/'+id, article).then(res => {
 
           console.log(res.data);
         }).catch(err => console.log(err.response));
@@ -326,7 +325,7 @@ const CreateArticle = (e) => {
 
         {
           finTagSearch === "false" ? (<span> no description found </span>)
-          : tagSearch == "heya" ? (<span> no description found </span>)
+          : tagSearch  === "heya" ? (<span> no description found </span>)
           : (<p> {treatJSON(tagSearch)} </p>)
         }
       <hr />
