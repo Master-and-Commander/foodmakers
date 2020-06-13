@@ -23,6 +23,7 @@ import Signup from "./components/signup.component.js";
 import ViewReview from "./components/viewreview.component.js";
 import SendRequest from "./components/sendrequest.component.js";
 import Requests from "./components/requests.component.js";
+import HomeController from "./controllers/HomeController.component.js";
 import PrivateRoute from './PrivateRoute';
 
 import { AuthContext } from "./context/auth";
@@ -55,6 +56,7 @@ const App = () => {
           <Route path="/tag" component = {Tag} />
           <Route path="/signup" component = {Signup} />
           <Route path="/viewreview" component = {ViewReview} />
+          <PrivateRoute path='/test' component = {HomeController} />
           <PrivateRoute path="/sendrequest" component = {SendRequest} />
           <PrivateRoute path="/requests" component = {Requests} />
           </div>

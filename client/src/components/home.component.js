@@ -2,7 +2,6 @@ import React, {Component, useState, useEffect} from 'react';
 import {useAuth} from '../context/auth';
 import axios from 'axios';
 import { Link, Redirect } from "react-router-dom";
-import {useAsyncHookforList} from './useAsyncHookforList';
 
 
 // str to replace : http://192.168.99.104:6200
@@ -156,20 +155,16 @@ const Home = () => {
     });
   }
 
-   const presentUserArticles = async(e) => {
+  const presentUserArticles = async(e) => {
      var arr = [];
-
      Promise.all(e.map(async(item)=> {
+      var author = await axios.get("http://192.168.99.104:6200/api/articles/fetchauthor/" + item);
+      var title = await axios.get("http://192.168.99.104:6200/api/articles/fetchtitle/" + item);
+      var articleInfo = await axios.get("http://192.168.99.104:6200/api/articles/get/" + item);
+      var name = await axios.get("http://192.168.99.104:6200/api/users/fetchusername/" + author["data"]);
+      var path = "/"+name["data"]+"/"+item;
 
-
-       var author = await axios.get("http://192.168.99.104:6200/api/articles/fetchauthor/" + item);
-       var title = await axios.get("http://192.168.99.104:6200/api/articles/fetchtitle/" + item);
-       var articleInfo = await axios.get("http://192.168.99.104:6200/api/articles/get/" + item);
-       var name = await axios.get("http://192.168.99.104:6200/api/users/fetchusername/" + author["data"]);
-       var path = "/"+name["data"]+"/"+item;
-       console.log("path " + path);
-
-       arr.push(<div>
+    arr.push(<div>
          <div className="card border-0">
            <div className="card-body">
            <div className="row no-gutters">
@@ -211,169 +206,143 @@ const Home = () => {
 
    }
 
-   const presentUserTags = (e, details) => {
-     var arr = [];
-     Promise.all(e.map(async(item) => {
-       var tag = await axios.get("http://192.168.99.104:6200/api/tags/get/" + item);
-       if(details["specialties"].includes(item))
-       arr.push(<div className="btn-group" role="group">
-       <button type="button" className="btn btn-primary mr-2" onClick={(e) => {
-       setDepart("tag");
-       setExtra(item);
-       }} >{tag["data"]["name"]}</button>
-       </div>);
-       else {
-         arr.push(<div className="btn-group" role="group">
-         <button type="button" className="btn btn-secondary mr-2" onClick={(e) => {
-           setDepart("tag");
-           setExtra(item);
-         }} >{tag["data"]["name"]}</button>
-         </div>);
-
-       }
-
+  const presentUserTags = (e, details) => {
+    var arr = [];
+    Promise.all(e.map(async(item) => {
+      var tag = await axios.get("http://192.168.99.104:6200/api/tags/get/" + item);
+      // show different color for what the user is an 'expert' in
+      if(details["specialties"].includes(item))
+        arr.push(
+          <div className="btn-group" role="group">
+            <button type="button" className="btn btn-primary mr-2" onClick={(e)=>{setDepart("tag");setExtra(item);}} >
+              {tag["data"]["name"]}
+            </button>
+          </div>
+        );
+      else {
+        arr.push(
+          <div className="btn-group" role="group">
+            <button type="button" className="btn btn-secondary mr-2" onClick={(e)=>{setDepart("tag"); setExtra(item);}}>
+              {tag["data"]["name"]}
+            </button>
+          </div>
+        );
+      }
      })).then(() => {
        setUserTags(arr);
      });
    }
+   // initialize profile only once
+  React.useEffect(() => { initializeUserProfile() }, []);
+  if(depart !== "false") {
+    if (depart === "viewreview") {
+      return <Redirect to= {{pathname: '/viewreview', state: { reviewID: extra }}} />;
+    }
 
-   React.useEffect(() => { initializeUserProfile() }, []);
-
-
-   if(depart !== "false") {
-
-     if (depart === "viewreview") {
-       return <Redirect to={{
-              pathname: '/viewreview',
-              state: { reviewID: extra }}} />;
-     }
-
-     if (depart === "reviewArticle") {
-       console.log("departing" + extra);
-       if(extra !== "notset")
-       return <Redirect to={{
-              pathname: '/createreview',
-              state: { articleID: extra }}} />;
+    else if (depart === "reviewArticle") {
+      if(extra !== "notset")
+        return <Redirect to={{pathname: '/createreview', state: { articleID: extra }}} />;
       else {
-      return  <Redirect to='/createreview' />;
+        return  <Redirect to='/createreview' />;
       }
-     }
-     if (depart === "editprofile") {
-        return <Redirect to='/editprofile' />;
-     }
-     else if (depart === "create") {
-       return <Redirect to='/createarticle' />;
-     }
+    }
+    
+    else if (depart === "editprofile") {
+      return <Redirect to='/editprofile' />;
+    }
 
-     else if (depart === "tag") {
-       console.log("departing" + extra);
-       return <Redirect to={{
-              pathname: '/tag',
-              state: { tagID: extra }}} />;
-     }
+    else if (depart === "create") {
+      return <Redirect to='/createarticle' />;
+    }
 
-     else if (depart === "editarticle") {
-       console.log("departing" + extra);
-       return <Redirect to={{
-         pathname: '/createarticle',
-         state: { articleID: extra }
-       }}/>
+    else if (depart === "tag") {
+      console.log("departing" + extra);
+      return <Redirect to={{pathname: '/tag',state: { tagID: extra }}} />;
+    }
 
-     }
+    else if (depart === "editarticle") {
+      return <Redirect to={{pathname: '/createarticle', state: { articleID: extra }}}/>
+    }
 
-     else if (depart === "view") {
-       console.log("departing" + extra);
-       return <Redirect to={{
-         pathname: '/article',
-         state: { articleID: extra }
-       }}/>
-     }
-     else if (depart === "request") {
-       return(<Redirect to={{
-              pathname: '/sendrequest',
-              state: { articleID: extra }}} />)
-     }
-   }
+    else if (depart === "view") {
+      console.log("departing" + extra);
+      return <Redirect to={{pathname: '/article',state: { articleID: extra }}}/>
+    }
+    else if (depart === "request") {
+      return(<Redirect to={{pathname: '/sendrequest',state: { articleID: extra }}} />)
+    }
+  }
 
-   const renderButtons = () => {
-     var toret = [];
-     console.log("Buttons array " + buttons);
-     for(var i = 0;i < buttons.length;i++) {
-       try{throw i}
-       catch(ii) {
-
-         toret.push(
-           <div className="btn-group" role="group">
-           <button type="button" id={i} className="btn btn-secondary mr-2" onClick={(e) => {
-             setExtra(buttons[e.target.id]["id"]);
-             console.log("extra: " + extra);
-             console.log("going to " + e.target.id );
-             setDepart("tag");
-           }} >{buttons[i]["name"]}</button>
-           </div>
-         );
-
-
-       }
-     }
-
-     return toret;
-
-   }
+  const renderButtons = () => {
+    var toret = [];
+    for(var i = 0;i < buttons.length;i++) {
+      try{throw i}
+      catch(ii) {
+        toret.push(
+          <div className="btn-group" role="group">
+            <button type="button" id={i} className="btn btn-secondary mr-2" onClick=
+            {(e) => {setExtra(buttons[e.target.id]["id"]);setDepart("tag");}}>
+              {buttons[i]["name"]}
+            </button>
+          </div>
+        );
+      }
+    }
+    return toret;
+  }
 
 
 
-   return (
-     <div className="card border-0">
+  return (
+    <div className="card border-0">
       <div className="row no-gutters">
         <div className="col-md-4">
-            <img src="/RedCrown/IMAGE-RedCrown.jpg" className="card-img rounded-0" alt="..." />
+          <img src="/RedCrown/IMAGE-RedCrown.jpg" className="card-img rounded-0" alt="..." />
         </div>
         <div className="col-md-8">
           <div className="card-body">
             <h1 className="card-title rightalign">{authTokens[0].username}</h1>
             <div className="text-right">
-            <div className="dropdown">
-              <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Options
-              </button>
-              <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <button className="dropdown-item" onClick={() => {setDepart("reviewArticle")}}>Review</button>
-                <button className="dropdown-item" onClick={() => {setDepart("editprofile")}} >Edit</button>
+              <div className="dropdown">
+                <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Options
+                </button>
+                <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <button className="dropdown-item" onClick={() => {setDepart("reviewArticle")}}>
+                    Review
+                  </button>
+                  <button className="dropdown-item" onClick={() => {setDepart("editprofile")}}>
+                    Edit
+                  </button>
+                </div>
               </div>
             </div>
-            </div>
-
             <p className="card-text">
-             {description}
+              {description}
             </p>
-            </div>
           </div>
         </div>
-        <div className="card-body">
-           {userTags}
-          <h5><small>interests</small></h5>
-
-        </div>
-        <div>
+      </div>
+      <div className="card-body">
+        {userTags}
+        <h5>
+          <small>interests</small>
+        </h5>
+      </div>
+      <div>
         <h2>Recipes to try</h2>
         <hr className="style1" />
-        {eatList}
-        </div>
-        <div>
+          {eatList}
+      </div>
+      <div>
         <h2>My Reviews</h2>
         <hr className="style1" />
         {userReviews}
-
         <h2>My Articles</h2>
         <hr className="style1" />
         {userArticles}
-
-
-
-      </div>
-
-      </div>
+     </div>
+    </div>
   )
 }
 
